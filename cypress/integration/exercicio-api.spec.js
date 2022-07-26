@@ -24,7 +24,7 @@ describe('Testes da Funcionalidade Usuários', () => {
                expect(response.body.produtos[4].nome).to.equal('Controle de TV')
                expect(response.status).to.equal(200)
                expect(response.body).to.have.property('produtos')
-               expect(response.duration).to.be.lessThan(20)
+               expect(response.duration).to.be.lessThan(50)
           })
      })
 
