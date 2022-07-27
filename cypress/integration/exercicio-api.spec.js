@@ -21,22 +21,22 @@ describe('Testes da Funcionalidade Usuários', () => {
                method: 'GET',
                url: 'usuarios'
           }).then((response) => {
-               expect(response.body.usuarios[4].nome).to.equal('Josse Paulo Pedro')
                expect(response.status).to.equal(200)
-               expect(response.body.usuarios[4].email).to.contain('Concepcion.Heaney65@hotmail.com')
-               expect(response.duration).to.be.lessThan(50)
+               expect(response.body).to.have.property('usuarios')
+               expect(response.duration).to.be.lessThan(20)
           })
-     })
+     });
 
 
      it('Deve cadastrar um usuário com sucesso', () => {
+          cy.cadastrarUsuario(token, faker.internet.userName(), faker.internet.email(), faker.internet.password())
           cy.request({
                method: 'POST',
                url: 'usuarios',
                body: {
-                    "nome": "Josse Paulo Pedro",
+                    "nome": faker.internet.userName(),
                     "email": faker.internet.email(),
-                    "password": "agigigiwa",
+                    "password": faker.internet.password(),
                     "administrador": "true"
                },
                headers: { authorization: token }
@@ -47,42 +47,45 @@ describe('Testes da Funcionalidade Usuários', () => {
      })
 
      it('Deve validar um usuário com email inválido', () => {
-          cy.request({
-               method: 'POST',
-               url: 'usuarios',
-               body: {
-                    "nome": "Angelo angela",
-                    "email": "fulano@qa.com",
-                    "password": "teste",
-                    "administrador": "true"
-               },
-               headers: { authorization: token },
-               failOnStatusCode: false
-          }).then((response) => {
-               expect(response.status).to.equal(400)
-               expect(response.body.message).to.equal('Este email já está sendo usado')
-          })
+          cy.cadastrarUsuario(token)
+               .then(response => {
+                    let id = response.body._id
+                    cy.request({
+                         method: 'PUT',
+                         url: `usuarios/${id}`,
+                         headers: { authorization: token },
+                         body: {
+                              "nome": "validar usuario",
+                              "email": "Saige_Grant@hotmail.com",
+                              "password": faker.internet.password(),
+                              "administrador": "true"
+                         },
+                         failOnStatusCode: false
+                    }).then(response => {
+                         expect(response.body.message).to.equal('Este email já está sendo usado')
+                    })
+               })
      });
 
 
-     it.only('Deve editar um usuário previamente cadastrado', () => {
+     it('Deve editar um usuário previamente cadastrado', () => {
           cy.cadastrarUsuario(token, faker.internet.userName(), faker.internet.email(), faker.internet.password())
-          .then(response => {
-               let id = response.body._id
-               cy.request({
-                    method: 'PUT',
-                    url: `usuarios/${id}`,
-                    headers: { authorization: token },
-                    body: {
-                         "nome": "Usuario editado",
-                         "email": faker.internet.email(),
-                         "password": faker.internet.password(),
-                         "administrador": "true"
-                    }
-               }).then(response => {
-                    expect(response.body.message).to.equal('Registro alterado com sucesso')
+               .then(response => {
+                    let id = response.body._id
+                    cy.request({
+                         method: 'PUT',
+                         url: `usuarios/${id}`,
+                         headers: { authorization: token },
+                         body: {
+                              "nome": "Usuario editado",
+                              "email": faker.internet.email(),
+                              "password": faker.internet.password(),
+                              "administrador": "true"
+                         }
+                    }).then(response => {
+                         expect(response.body.message).to.equal('Registro alterado com sucesso')
+                    })
                })
-          })
      });
 
      it('Deve deletar um usuário previamente cadastrado', () => {
