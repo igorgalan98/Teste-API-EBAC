@@ -13,17 +13,17 @@ describe('Testes da Funcionalidade Usuários', () => {
      it('Deve validar contrato de usuários', () => {
           cy.request('usuarios').then(response => {
                return usuario.validateAsync(response.body)
-           })
-       });
+          })
+     });
 
-     it.only('Deve listar usuários cadastrados', () => {
+     it('Deve listar usuários cadastrados', () => {
           cy.request({
                method: 'GET',
                url: 'usuarios'
           }).then((response) => {
                expect(response.body.usuarios[4].nome).to.equal('Josse Paulo Pedro')
                expect(response.status).to.equal(200)
-               expect(response.body.usuarios[4].email).to.have.contain('Concepcion.Heaney65@hotmail.com')
+               expect(response.body.usuarios[4].email).to.contain('Concepcion.Heaney65@hotmail.com')
                expect(response.duration).to.be.lessThan(50)
           })
      })
@@ -51,9 +51,9 @@ describe('Testes da Funcionalidade Usuários', () => {
                method: 'POST',
                url: 'usuarios',
                body: {
-                    "nome": "Jose Paulo Pedro",
-                    "email": "Nettie_Halvorson@yahoo.com",
-                    "password": "agigigiwa",
+                    "nome": "Angelo angela",
+                    "email": "fulano@qa.com",
+                    "password": "teste",
                     "administrador": "true"
                },
                headers: { authorization: token },
@@ -65,37 +65,38 @@ describe('Testes da Funcionalidade Usuários', () => {
      });
 
 
-     it('Deve editar um usuário previamente cadastrado', () => {
-          cy.request('usuarios').then(response => {
-               let id = response.body.usuarios[0]._id
+     it.only('Deve editar um usuário previamente cadastrado', () => {
+          cy.cadastrarUsuario(token, faker.internet.userName(), faker.internet.email(), faker.internet.password())
+          .then(response => {
+               let id = response.body._id
                cy.request({
-                   method: 'PUT',
-                   url: `usuarios/${id}`,
-                   headers: {authorization: token},
-                   body: {
-                       "nome": "Usuario editado forever",
-                       "email": "taloasrswift@qa.com",
-                       "password": "editando",
-                       "administrador": "true"
-                   }
+                    method: 'PUT',
+                    url: `usuarios/${id}`,
+                    headers: { authorization: token },
+                    body: {
+                         "nome": "Usuario editado",
+                         "email": faker.internet.email(),
+                         "password": faker.internet.password(),
+                         "administrador": "true"
+                    }
                }).then(response => {
-                   expect(response.body.message).to.equal('Registro alterado com sucesso')
+                    expect(response.body.message).to.equal('Registro alterado com sucesso')
                })
-           })
+          })
      });
 
      it('Deve deletar um usuário previamente cadastrado', () => {
           cy.request('usuarios').then(response => {
                let id = response.body.usuarios[0]._id
                cy.request({
-                   method: 'DELETE',
-                   url: `usuarios/${id}`,
-                   headers: {authorization: token},
-          }).then(response =>{
-               expect(response.body.message).to.equal('Registro excluído com sucesso')
-               expect(response.status).to.equal(200)
-          })
-     });
+                    method: 'DELETE',
+                    url: `usuarios/${id}`,
+                    headers: { authorization: token },
+               }).then(response => {
+                    expect(response.body.message).to.equal('Registro excluído com sucesso')
+                    expect(response.status).to.equal(200)
+               })
+          });
 
-})
+     })
 })

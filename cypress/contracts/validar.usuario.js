@@ -7,7 +7,7 @@ const usuarioSchema = Joi.object({
         nome: Joi.string(),
         password: Joi.string(),
         "administrador": "true",
-        "_id": Joi.string()
+        _id: Joi.string()
     })
 })
 export default usuarioSchema;
