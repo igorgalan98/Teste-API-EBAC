@@ -16,14 +16,14 @@ describe('Testes da Funcionalidade Usuários', () => {
            })
        });
 
-     it('Deve listar usuários cadastrados', () => {
+     it.only('Deve listar usuários cadastrados', () => {
           cy.request({
                method: 'GET',
-               url: 'produtos'
+               url: 'usuarios'
           }).then((response) => {
-               expect(response.body.produtos[4].nome).to.equal('Controle de TV')
+               expect(response.body.usuarios[4].nome).to.equal('Josse Paulo Pedro')
                expect(response.status).to.equal(200)
-               expect(response.body).to.have.property('produtos')
+               expect(response.body.usuarios[4].email).to.have.contain('Concepcion.Heaney65@hotmail.com')
                expect(response.duration).to.be.lessThan(50)
           })
      })
