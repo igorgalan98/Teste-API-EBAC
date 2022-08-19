@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage("Clonar Repositório") {
             steps {
-                git 'https://github.com/igorgalan98/e2e-1-product-4-items-cypress.git'
+                git 'https://github.com/igorgalan98/Teste-API-EBAC.git'
             }
         }
         stage("Instalar dependências") {
